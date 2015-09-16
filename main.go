@@ -228,13 +228,11 @@ err:
 
 func gitNameRev(rev string) (name string, err error) {
 	out, err := run("git", "name-rev", "--name-only", rev)
-	log.Println(string(out))
 	return string(out), err
 }
 
 func gitRevParseVerify(rev string) (sha1 string, err error) {
 	out, err := run("git", "rev-parse", "--verify", rev)
-	log.Println(string(out))
 	return string(out), err
 }
 
