@@ -18,6 +18,8 @@
 //	        forward test to benchstat -delta-test flag
 //	  -gt-flags string
 //	        forward quoted string of flags to go test
+//	  -h-vs-h1
+// 		use HEAD~1 as rev.old and HEAD as rev.new
 //	  -html
 //	        invoke benchstat with -html flag
 //	  -n number
