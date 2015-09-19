@@ -56,6 +56,7 @@ import (
 var (
 	bench   = flag.String("bench", ".", "`regexp` denoting benchmarks to run (go test -bench)")
 	nflag   = flag.Int("n", 10, "`number` of go test invocations per git revision")
+	hvsh1   = flag.Bool("h-vs-h1", false, "use HEAD~1 as rev.old and HEAD as rev.new")
 	gtpkgs  = flag.String("pkgs", ".", "packages to test (go test [packages])")
 	gtflags = flag.String("gt-flags", "", "forward quoted `string` of flags to go test")
 	bsdelta = flag.String("delta-test", "", "forward `test` to benchstat -delta-test flag")
@@ -81,7 +82,7 @@ type rev struct {
 func main() {
 	flag.Usage = usage
 	flag.Parse()
-	if flag.NArg() < 1 {
+	if flag.NArg() < 1 && !*hvsh1 {
 		flag.Usage()
 	}
 
@@ -95,6 +96,7 @@ func main() {
 	setupLogging()
 
 	var (
+		args    []string
 		revs    []*rev
 		tmpdir  string
 		nmaxlen int
@@ -108,11 +110,16 @@ func main() {
 		goto err
 	}
 
-	for i := 0; i < flag.NArg(); i++ {
-		f := flag.Arg(i)
+	if *hvsh1 {
+		args = []string{"HEAD~1", "HEAD"}
+	} else {
+		args = flag.Args()
+	}
+
+	for _, arg := range args {
 		r := &rev{}
-		r.name = f
-		r.sha1, err = gitRevParseVerify(f)
+		r.name = arg
+		r.sha1, err = gitRevParseVerify(arg)
 		if err != nil {
 			goto err
 		}
